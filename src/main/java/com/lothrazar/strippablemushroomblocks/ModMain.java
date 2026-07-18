@@ -17,7 +17,7 @@ public class ModMain {
 //    ModRegistry.BLOCKS.register(eventBus);
 //    ModRegistry.ITEMS.register(eventBus);
 //    ModRegistry.TILE_ENTITIES.register(eventBus);
-    modContainer.registerConfig(ModConfig.Type.COMMON, ConfigManager.CONFIG);
+//    modContainer.registerConfig(ModConfig.Type.COMMON, ConfigManager.CONFIG);
     eventBus.addListener(this::setup);
     eventBus.addListener(this::setupClient);
   }
