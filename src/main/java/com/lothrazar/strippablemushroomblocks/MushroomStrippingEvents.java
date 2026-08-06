@@ -55,8 +55,8 @@ public class MushroomStrippingEvents {
         return;
       }
       event.setCanceled(true);
-      event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
-      if (!level.isClientSide) {
+      event.setCancellationResult(level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
+      if (!level.isClientSide()) {
         state = state.setValue(prop, !state.getValue(prop));
         level.setBlock(hit.getBlockPos(), state, Block.UPDATE_ALL_IMMEDIATE);
         EquipmentSlot slot = event.getHand() == InteractionHand.MAIN_HAND
@@ -66,8 +66,8 @@ public class MushroomStrippingEvents {
       }
     } else {
       event.setCanceled(true);
-      event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
-      if (!level.isClientSide) {
+      event.setCancellationResult(level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
+      if (!level.isClientSide()) {
         for (BooleanProperty prop : FACE_PROPS.values()) {
           state = state.setValue(prop, !state.getValue(prop));
         }
