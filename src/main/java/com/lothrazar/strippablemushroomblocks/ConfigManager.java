@@ -1,14 +1,15 @@
 package com.lothrazar.strippablemushroomblocks;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
-import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import com.lothrazar.library.config.ConfigTemplate;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 
-public class ConfigManager  {
+public class ConfigManager extends ConfigTemplate {
 
-  static ModConfigSpec CONFIG;
+  static ForgeConfigSpec CONFIG;
   public static BooleanValue TESTING;
   static {
-//    final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+//    final ForgeConfigSpec.Builder BUILDER = builder();
 //    BUILDER.comment("Mod settings").push(ModMain.MODID);
 //    TESTING = BUILDER.comment("Testing boolean config").define("doesNothing", true);
 //    BUILDER.pop(); // one pop for every push

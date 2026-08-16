@@ -16,12 +16,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HugeMushroomBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
-@EventBusSubscriber(modid = ModMain.MODID)
+@Mod.EventBusSubscriber(modid = ModMain.MODID)
 public class MushroomStrippingEvents {
 
   //link DIR to actual face
@@ -42,15 +41,17 @@ public class MushroomStrippingEvents {
     if (!(stack.getItem() instanceof AxeItem)) {
       return;
     }
-    BlockHitResult hit = event.getHitVec();
-    BlockState state = level.getBlockState(hit.getBlockPos());
+    if (event.getPos() == null || event.getFace() == null) {
+      return;
+    }
+    BlockState state = level.getBlockState(event.getPos());
     if (state.getBlock() != Blocks.RED_MUSHROOM_BLOCK
         && state.getBlock() != Blocks.BROWN_MUSHROOM_BLOCK
         && state.getBlock() != Blocks.MUSHROOM_STEM) {
       return;
     }
     if (!player.isShiftKeyDown()) {
-      BooleanProperty prop = FACE_PROPS.get(hit.getDirection());
+      BooleanProperty prop = FACE_PROPS.get(event.getFace());
       if (prop == null) {
         return;
       }
@@ -58,11 +59,11 @@ public class MushroomStrippingEvents {
       event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
       if (!level.isClientSide) {
         state = state.setValue(prop, !state.getValue(prop));
-        level.setBlock(hit.getBlockPos(), state, Block.UPDATE_ALL_IMMEDIATE);
+        level.setBlock(event.getPos(), state, Block.UPDATE_ALL_IMMEDIATE);
         EquipmentSlot slot = event.getHand() == InteractionHand.MAIN_HAND
             ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-        stack.hurtAndBreak(1, player, slot);
-        level.playSound(null, hit.getBlockPos(), SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
+        stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(slot));
+        level.playSound(null, event.getPos(), SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
       }
     } else {
       event.setCanceled(true);
@@ -71,11 +72,11 @@ public class MushroomStrippingEvents {
         for (BooleanProperty prop : FACE_PROPS.values()) {
           state = state.setValue(prop, !state.getValue(prop));
         }
-        level.setBlock(hit.getBlockPos(), state, Block.UPDATE_ALL_IMMEDIATE);
+        level.setBlock(event.getPos(), state, Block.UPDATE_ALL_IMMEDIATE);
         EquipmentSlot slot = event.getHand() == InteractionHand.MAIN_HAND
             ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-        stack.hurtAndBreak(1, player, slot);
-        level.playSound(null, hit.getBlockPos(), SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
+        stack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(slot));
+        level.playSound(null, event.getPos(), SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
       }
     }
   }
